@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
+from django.views.static import serve
 
 from shop.sitemaps import CategorySitemap, ProductSitemap, StaticSitemap
 
@@ -28,6 +29,11 @@ urlpatterns = [
 ]
 
 
-# Serve uploaded images in development. In production the host serves /media/ (see HOSTING_GUIDE.md).
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve uploaded product images from the configured media directory.
+urlpatterns += [
+    re_path(
+        r"^media/(?P<path>.*)$",
+        serve,
+        {"document_root": settings.MEDIA_ROOT},
+    ),
+]
