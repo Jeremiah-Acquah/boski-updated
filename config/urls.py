@@ -25,15 +25,14 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     path(settings.DASHBOARD_URL, include("dashboard.urls")),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
-    path("", include("shop.urls")),
-]
-
-
-# Serve uploaded product images from the configured media directory.
-urlpatterns += [
     re_path(
         r"^media/(?P<path>.*)$",
         serve,
         {"document_root": settings.MEDIA_ROOT},
     ),
+    path("", include("shop.urls")),
 ]
+
+
+# Serve uploaded product images from the configured media directory.
+
