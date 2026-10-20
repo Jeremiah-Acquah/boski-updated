@@ -1,0 +1,26 @@
+{% extends "shop/base.html" %}
+
+{% block title %}{% if q %}Search: {{ q }}{% else %}Search{% endif %} | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="section-title page-head">
+  <h1>{% if q %}Results for "{{ q }}"{% else %}Search{% endif %}</h1>
+  {% if q or selected_category %}<span class="count">{{ products|length }} product{{ products|length|pluralize }} found</span>{% endif %}
+</div>
+{% if products %}
+<div class="product-grid">
+  {% for p in products %}{% include "shop/_product_card.html" %}{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  {% if q %}
+  <h2>No match for "{{ q }}"</h2>
+  <p>Try a shorter word, or ask Boski. He can often source items that are not listed yet.</p>
+  <a class="btn btn-wa" href="https://wa.me/{{ store.whatsapp_number }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Ask on WhatsApp</a>
+  {% else %}
+  <h2>Type what you are looking for</h2>
+  <p>Use the search box at the top, for example "tricycle" or "phone".</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

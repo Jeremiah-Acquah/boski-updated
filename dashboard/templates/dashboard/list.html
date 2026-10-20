@@ -1,0 +1,67 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ cfg.label }}{% endblock %}
+{% block content %}
+<header class="top">
+ <div><h1>{{ cfg.label }}</h1><p class="sub">{{ page.paginator.count }} total</p></div>
+ {% if can_create %}<a class="btn" href="{% url 'dashboard:create' key %}">Add {{ cfg.singular }}</a>{% endif %}
+</header>
+
+<div class="tools">
+ <form method="get" style="display:contents">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search {{ cfg.label|lower }}" aria-label="Search">
+  {% if pending %}<input type="hidden" name="pending" value="1">{% endif %}
+  <button class="btn ghost" type="submit">Search</button>
+ </form>
+ {% if cfg.pending_filter %}
+  <span class="tabs">
+   <a href="?" class="{% if not pending %}on{% endif %}">All</a>
+   <a href="?pending=1" class="{% if pending %}on{% endif %}">Not handled yet</a>
+  </span>
+ {% endif %}
+</div>
+
+<div class="tablewrap">
+{% if rows %}
+<table>
+ <thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}<th></th></tr></thead>
+ <tbody>
+ {% for row in rows %}
+  <tr>
+   {% for c in row.cells %}
+    <td>
+    {% if c.kind == "image" %}{% if c.value %}<img src="{{ c.value }}" alt="">{% else %}-{% endif %}
+    {% elif c.kind == "toggle" %}
+     <form method="post" action="{% url 'dashboard:toggle' key row.obj.pk c.field %}">
+      {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <button type="submit" class="sw {% if c.value %}on{% endif %}" role="switch" aria-checked="{% if c.value %}true{% else %}false{% endif %}" aria-label="{% if c.value %}Turn off{% else %}Turn on{% endif %}"></button>
+     </form>
+    {% elif c.kind == "bool" %}<span class="pill {% if c.value %}yes{% endif %}">{% if c.value %}Yes{% else %}No{% endif %}</span>
+    {% elif c.kind == "date" %}{{ c.value|date:"j M Y, H:i" }}
+    {% elif c.kind == "link" %}{% if c.value %}<a href="{{ c.value }}" target="_blank" rel="noopener">Reply on WhatsApp</a>{% else %}-{% endif %}
+    {% elif c.link %}<a class="name" href="{% url 'dashboard:edit' key row.obj.pk %}">{{ c.value }}</a>
+    {% else %}{{ c.value }}{% endif %}
+    </td>
+   {% endfor %}
+   <td><div class="actions"><a class="btn ghost sm" href="{% url 'dashboard:edit' key row.obj.pk %}">Edit</a>
+    <a class="btn ghost sm" href="{% url 'dashboard:delete' key row.obj.pk %}">Delete</a></div></td>
+  </tr>
+ {% endfor %}
+ </tbody>
+</table>
+{% else %}
+ <div class="empty">
+  {% if q or pending %}<p>Nothing matches that search.</p>
+  {% else %}<p>No {{ cfg.label|lower }} yet.</p>
+  {% if can_create %}<a class="btn" href="{% url 'dashboard:create' key %}">Add your first {{ cfg.singular }}</a>{% endif %}{% endif %}
+ </div>
+{% endif %}
+</div>
+
+{% if page.has_other_pages %}
+<div class="pager">
+ {% if page.has_previous %}<a class="btn ghost sm" href="?page={{ page.previous_page_number }}&q={{ q }}{% if pending %}&pending=1{% endif %}">Previous</a>{% endif %}
+ <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+ {% if page.has_next %}<a class="btn ghost sm" href="?page={{ page.next_page_number }}&q={{ q }}{% if pending %}&pending=1{% endif %}">Next</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Contact and item requests | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Contact {{ store.store_name }}</h1></div>
+
+<div class="contact-grid">
+  <section class="block" style="margin-top:0">
+    <div class="block-head"><h2>Get in touch</h2></div>
+    <ul class="info-list">
+      <li>
+        <span class="icon">{% include "shop/_wa_icon.html" %}</span>
+        <div><strong>WhatsApp (fastest)</strong><a href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{{ store.phone_display }}</a></div>
+      </li>
+      {% if store.email %}<li><span class="icon"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><div><strong>Email</strong><a href="mailto:{{ store.email }}">{{ store.email }}</a></div></li>{% endif %}
+      {% if store.location %}<li><span class="icon"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg></span><div><strong>Location</strong>{{ store.location }}</div></li>{% endif %}
+      {% if store.working_hours %}<li><span class="icon"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><div><strong>Working hours</strong>{{ store.working_hours }}</div></li>{% endif %}
+    </ul>
+    <p style="margin-top:1.2rem"><a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat on WhatsApp</a></p>
+  </section>
+
+  <section class="block" id="request" style="margin-top:0">
+    <div class="block-head"><h2>Request an item</h2></div>
+    <p style="margin-bottom:1rem">Cannot find what you need? Tell Boski what you want and he will check if he can source it from China. He replies on WhatsApp.</p>
+    <form class="form" method="post" action="{% url 'shop:contact' %}#request" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="flash error" role="alert"><span>{{ form.non_field_errors|join:" " }}</span></div>{% endif %}
+      <div class="hp" aria-hidden="true"><label for="id_website">Leave this field empty</label>{{ form.website }}</div>
+      {% for field in form.visible_fields %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<p class="error">{{ error }}</p>{% endfor %}
+      </div>
+      {% endfor %}
+      <button class="btn btn-primary btn-lg" type="submit">Send request</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

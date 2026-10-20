@@ -1,0 +1,19 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Categories | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Categories</h1></div>
+{% if categories %}
+<div class="cat-grid">
+  {% for c in categories %}
+  <a class="cat-card" href="{{ c.get_absolute_url }}">
+    <span class="icon"><svg class="ic" aria-hidden="true"><use href="#i-{{ c.icon_key }}"/></svg></span>
+    <span><strong>{{ c.name }}</strong><span>{{ c.n }} product{{ c.n|pluralize }}</span></span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty"><h2>No categories yet</h2><p>Categories appear here once Boski adds them.</p></div>
+{% endif %}
+{% endblock %}

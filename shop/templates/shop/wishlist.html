@@ -1,0 +1,23 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Saved items | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Saved items</h1>
+  {% if items %}<span class="meta">{{ items|length }} item{{ items|length|pluralize }}</span>{% endif %}
+</div>
+
+{% if items %}
+<div class="product-grid">
+  {% for p in items %}{% include "shop/_product_card.html" %}{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg>
+  <h2>Nothing saved yet</h2>
+  <p>Tap the heart on any product to keep it here for later.</p>
+  <a class="btn btn-primary" href="{% url 'shop:products' %}">Browse products</a>
+</div>
+{% endif %}
+{% endblock %}

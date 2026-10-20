@@ -1,0 +1,26 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Help and questions | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Help and questions</h1></div>
+<div class="faq-list">
+  {% for f in faqs %}
+  <details>
+    <summary>{{ f.question }}</summary>
+    <div class="answer">{{ f.answer }}</div>
+  </details>
+  {% empty %}
+  <div class="empty"><h2>No questions yet</h2><p>Message Boski on WhatsApp and he will help you.</p></div>
+  {% endfor %}
+</div>
+<section class="cta">
+  <div>
+    <h2>Still have a question?</h2>
+    <p>Chat with Boski on WhatsApp. He replies in the chat.</p>
+  </div>
+  <div class="btns">
+    <a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat on WhatsApp</a>
+  </div>
+</section>
+{% endblock %}

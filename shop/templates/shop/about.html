@@ -1,0 +1,17 @@
+{% extends "shop/base.html" %}
+
+{% block title %}About | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>About {{ store.store_name }}</h1></div>
+<section class="block" style="margin-top:0">
+  <div class="about">
+    <p>{{ store.store_name }} imports goods from China to Ghana on preorder. Browse the products on this site, choose what you want, and send a preorder on WhatsApp. {{ store.store_name }} confirms the price, payment and delivery time with you directly.</p>
+    <p>Cannot find what you need? Send a request and we will try to source it for you.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:0.6rem">
+      <a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat on WhatsApp</a>
+      <a class="btn btn-outline" href="{% url 'shop:contact' %}#request">Request an item</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

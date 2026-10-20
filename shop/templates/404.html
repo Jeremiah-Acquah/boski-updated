@@ -1,0 +1,15 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Page not found | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="empty mt">
+  <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+  <h2>We could not find that page</h2>
+  <p>The link may be old, or the product may have been removed. Try searching or browse the categories.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:0.6rem;justify-content:center">
+    <a class="btn btn-primary" href="{% url 'shop:home' %}">Go to home page</a>
+    <a class="btn btn-outline" href="{% url 'shop:products' %}">Browse products</a>
+  </div>
+</div>
+{% endblock %}

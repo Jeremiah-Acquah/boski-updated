@@ -1,0 +1,66 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Preorder list | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Your preorder list</h1>
+  {% if rows %}<span class="meta">{{ rows|length }} item{{ rows|length|pluralize }}</span>{% endif %}
+</div>
+
+{% if rows %}
+<div class="cart-layout">
+  <div class="cart-list">
+    {% for r in rows %}
+    <div class="cart-item">
+      <a class="thumb" href="{{ r.product.get_absolute_url }}"><img src="{{ r.product.main_image.url }}" alt="{{ r.product.name }}"></a>
+      <div>
+        <h3><a href="{{ r.product.get_absolute_url }}">{{ r.product.name }}</a></h3>
+        <p class="unit">{{ r.product.price_display }} each</p>
+      </div>
+      <div class="cart-row">
+        <form method="post" action="{% url 'shop:cart_update' r.product.pk %}" class="cart-row" style="margin-top:0">
+          {% csrf_token %}
+          <div class="qty">
+            <button type="button" data-step="-1" aria-label="Decrease quantity">&minus;</button>
+            <input type="number" name="qty" value="{{ r.qty }}" min="1" max="99" aria-label="Quantity for {{ r.product.name }}">
+            <button type="button" data-step="1" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="link-btn update" type="submit">Update</button>
+        </form>
+        <form method="post" action="{% url 'shop:cart_remove' r.product.pk %}">
+          {% csrf_token %}
+          <button class="link-btn update" type="submit">Remove</button>
+        </form>
+        <span class="line">{{ r.product.currency }} {{ r.line_total|floatformat:"2g" }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <aside class="summary" aria-label="Order summary">
+    <h2>Summary</h2>
+    <dl>
+      <div><dt>Items</dt><dd>{{ rows|length }}</dd></div>
+      {% if total is not None %}
+      <div class="total"><dt>Estimated total</dt><dd>{{ currency }} {{ total|floatformat:"2g" }}</dd></div>
+      {% endif %}
+    </dl>
+    <a class="btn btn-wa btn-lg btn-block" href="{{ whatsapp_url }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Send preorder on WhatsApp</a>
+    <p class="fine">Your list opens in WhatsApp as one message to Boski. He confirms availability, the final price, payment and delivery time. No payment is taken on this website.</p>
+    <a class="btn btn-ghost btn-block" href="{% url 'shop:products' %}">Continue shopping</a>
+    <form method="post" action="{% url 'shop:cart_clear' %}">
+      {% csrf_token %}
+      <button class="link-btn" type="submit">Clear list</button>
+    </form>
+  </aside>
+</div>
+{% else %}
+<div class="empty">
+  <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+  <h2>Your preorder list is empty</h2>
+  <p>Add the products you want, then send them all to Boski in one WhatsApp message.</p>
+  <a class="btn btn-primary" href="{% url 'shop:products' %}">Browse products</a>
+</div>
+{% endif %}
+{% endblock %}

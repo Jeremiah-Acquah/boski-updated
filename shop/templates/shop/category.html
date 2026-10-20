@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+
+{% block title %}{{ category.name }} | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="section-title page-head">
+  <h1>{{ category.name }}</h1>
+  <span class="count">{{ products|length }} product{{ products|length|pluralize }}</span>
+</div>
+{% if products %}
+<div class="product-grid">
+  {% for p in products %}{% include "shop/_product_card.html" %}{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <h2>Nothing in {{ category.name }} yet</h2>
+  <p>Products are added regularly. Message Boski and tell him what you want to order.</p>
+  <a class="btn btn-wa" href="https://wa.me/{{ store.whatsapp_number }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat on WhatsApp</a>
+</div>
+{% endif %}
+{% endblock %}

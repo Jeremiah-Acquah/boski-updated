@@ -1,0 +1,132 @@
+{% extends "shop/base.html" %}
+{% load l10n %}
+
+{% block title %}{{ product.name }} | {{ store.store_name }}{% endblock %}
+{% block meta_description %}{{ product.short_description|default:product.name }}. {{ product.price_display }}. Preorder on WhatsApp.{% endblock %}
+{% block canonical %}{{ absolute_url }}{% endblock %}
+{% block body_class %}has-sticky{% endblock %}
+
+{% block og %}
+<meta property="og:site_name" content="{{ store.store_name }}">
+<meta property="og:type" content="product">
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{{ product.short_description|default:product.name }} - {{ product.price_display }}">
+<meta property="og:url" content="{{ absolute_url }}">
+<meta property="og:image" content="{{ og_image }}">
+{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'shop:home' %}">Home</a> /
+  <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a> /
+  {{ product.name }}
+</nav>
+
+<div class="product-layout">
+  <div class="gallery">
+    <div class="gallery-main">
+      <div class="badges">
+        {% if product.has_discount %}<span class="badge badge-sale">-{{ product.discount_percent }}%</span>{% endif %}
+        {% if product.is_new %}<span class="badge badge-new">New</span>{% endif %}
+      </div>
+      <img id="gallery-main-img" src="{{ gallery.0.url }}" alt="{{ product.name }}">
+    </div>
+    {% if gallery|length > 1 %}
+    <div class="thumbs" role="group" aria-label="More photos of {{ product.name }}">
+      {% for g in gallery %}
+      <button type="button" data-src="{{ g.url }}" data-alt="{{ g.caption }}"{% if forloop.first %} aria-current="true"{% endif %} aria-label="Show photo {{ forloop.counter }} of {{ gallery|length }}">
+        <img src="{{ g.url }}" alt="" loading="lazy">
+      </button>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="product-info">
+    <a class="category-link" href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+    <h1>{{ product.name }}</h1>
+    {% if product.short_description %}<p class="short">{{ product.short_description }}</p>{% endif %}
+
+    <div class="price-box">
+      <span class="now">{{ product.price_display }}</span>
+      {% if product.has_discount %}
+      <span class="was">{{ product.old_price_display }}</span>
+      <span class="badge badge-sale save">Save {{ product.discount_percent }}%</span>
+      {% endif %}
+      <small>Preorder price. Boski confirms the final amount on WhatsApp.</small>
+    </div>
+
+    <dl class="facts">
+      <div><dt>Availability</dt><dd>Preorder from China</dd></div>
+      {% if product.delivery_time %}<div><dt>Delivery time</dt><dd>{{ product.delivery_time }}</dd></div>{% endif %}
+      <div><dt>Category</dt><dd>{{ product.category.name }}</dd></div>
+    </dl>
+
+    <div class="buy">
+      <a class="btn btn-wa btn-lg btn-block" href="{{ whatsapp_url }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Preorder now on WhatsApp</a>
+
+      <form class="qty-row" method="post" action="{% url 'shop:cart_add' product.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <div class="qty">
+          <button type="button" data-step="-1" aria-label="Decrease quantity">&minus;</button>
+          <input type="number" name="qty" value="1" min="1" max="99" aria-label="Quantity">
+          <button type="button" data-step="1" aria-label="Increase quantity">+</button>
+        </div>
+        <button class="btn btn-outline" type="submit"><svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>Add to preorder list</button>
+      </form>
+      {% if in_cart %}<p class="in-list">{{ in_cart }} in your preorder list. <a href="{% url 'shop:cart' %}">View list</a></p>{% endif %}
+      <p class="buy-note">Opens WhatsApp with this product in your message to Boski. No payment is taken on this website.</p>
+    </div>
+
+    <div class="share">
+      <form class="wish-form-inline" method="post" action="{% url 'shop:wishlist_toggle' product.pk %}" style="position:static">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="wish-btn{% if product.pk in wishlist_set %} is-on{% endif %}" aria-pressed="{% if product.pk in wishlist_set %}true{% else %}false{% endif %}" aria-label="Save for later"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></button>
+      </form>
+      <span>Save for later</span>
+      <a href="https://wa.me/?text={{ product.name|urlencode }}%20{{ absolute_url|urlencode }}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg>Share on WhatsApp</a>
+      <button type="button" data-copy="{{ absolute_url }}">Copy link</button>
+    </div>
+  </div>
+</div>
+
+{% if product.description %}
+<section class="block">
+  <div class="block-head"><h2>Product details</h2></div>
+  <div class="description">{{ product.description }}</div>
+</section>
+{% endif %}
+
+{% if related %}
+{% include "shop/_block.html" with title="More in this category" items=related more_url=product.category.get_absolute_url %}
+{% endif %}
+{% if recent %}
+{% include "shop/_block.html" with title="Recently viewed" items=recent icon="clock" %}
+{% endif %}
+
+<div class="sticky-bar">
+  <p class="now">{{ product.price_display }}{% if product.has_discount %}<small>{{ product.old_price_display }}</small>{% endif %}</p>
+  <a class="btn btn-wa" href="{{ whatsapp_url }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Preorder</a>
+</div>
+
+<script type="application/ld+json">{{ jsonld|safe }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var main = document.getElementById("gallery-main-img");
+    var thumbs = document.querySelectorAll(".thumbs button");
+    thumbs.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        main.src = btn.dataset.src;
+        main.alt = btn.dataset.alt;
+        thumbs.forEach(function (b) { b.removeAttribute("aria-current"); });
+        btn.setAttribute("aria-current", "true");
+      });
+    });
+  })();
+</script>
+{% endblock %}

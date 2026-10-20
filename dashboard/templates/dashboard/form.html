@@ -1,0 +1,61 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{% if instance %}Edit{% else %}New{% endif %} {{ cfg.singular }}{% endblock %}
+{% block content %}
+<header class="top">
+ <div>
+  <h1>{% if singleton %}Store settings{% elif instance %}Edit {{ cfg.singular }}{% else %}New {{ cfg.singular }}{% endif %}</h1>
+  {% if singleton %}<p class="sub">Changes show on the website as soon as you save.</p>{% endif %}
+ </div>
+</header>
+
+<form method="post" enctype="multipart/form-data" class="stack" novalidate>
+ {% csrf_token %}
+ {% if form.non_field_errors %}<p class="err">{{ form.non_field_errors }}</p>{% endif %}
+
+ {% for title, fields in groups %}
+ <fieldset class="card">
+  {% if title %}<legend>{{ title }}</legend>{% endif %}
+  {% for f in fields %}
+   <div class="field {% if f.widget_type == 'checkbox' %}check{% endif %}">
+    {% if f.widget_type == 'checkbox' %}
+     <label>{{ f }} {{ f.label }}</label>
+    {% else %}
+     <label for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}
+    {% endif %}
+    {% if f.help_text %}<p class="help">{{ f.help_text }}</p>{% endif %}
+    {% for e in f.errors %}<p class="err">{{ e }}</p>{% endfor %}
+   </div>
+  {% endfor %}
+ </fieldset>
+ {% endfor %}
+
+ {% if formset %}
+ <fieldset class="card">
+  <legend>More photos</legend>
+  <p class="help" style="margin-bottom:12px">Extra pictures shown in the product gallery. Tick Remove to delete a photo.</p>
+  {{ formset.management_form }}
+  {% if formset.non_form_errors %}<p class="err">{{ formset.non_form_errors }}</p>{% endif %}
+  <div class="gallery">
+   {% for fm in formset %}
+    <div class="item">
+     {% for h in fm.hidden_fields %}{{ h }}{% endfor %}
+     {% for f in fm.visible_fields %}
+      <div class="field {% if f.widget_type == 'checkbox' %}check{% endif %}">
+       {% if f.widget_type == 'checkbox' %}<label>{{ f }} Remove this photo</label>
+       {% else %}<label for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}{% endif %}
+       {% for e in f.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      </div>
+     {% endfor %}
+    </div>
+   {% endfor %}
+  </div>
+ </fieldset>
+ {% endif %}
+
+ <div class="savebar">
+  <button class="btn" type="submit">Save {{ cfg.singular }}</button>
+  {% if not singleton %}<a class="btn ghost" href="{{ back_url }}">Cancel</a>{% endif %}
+  {% if instance %}<a class="btn ghost" href="{% url 'dashboard:delete' key instance.pk %}">Delete {{ cfg.singular }}</a>{% endif %}
+ </div>
+</form>
+{% endblock %}

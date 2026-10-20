@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin login · {{ store.store_name|default:"Boski" }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0F2B46;--navy2:#1B3F63;--ink:#17212B;--muted:#5C6B7A;--line:#BCC8D4;--accent:#C2410C;--bad:#B3261E}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--navy);color:var(--ink);font:15px/1.5 Figtree,system-ui,-apple-system,"Segoe UI",sans-serif}
+.box{width:100%;max-width:400px}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;margin-bottom:18px}
+.brand svg{width:44px;height:44px;flex:none}
+.brand b{display:block;font-size:20px;line-height:1.2}
+.brand small{color:#9FB6CC}
+.card{background:#fff;border-radius:12px;padding:26px}
+h1{margin:0 0 4px;font-size:24px;letter-spacing:-.01em}
+.sub{margin:0 0 20px;color:var(--muted)}
+.field{margin-bottom:16px}
+label{display:block;font-weight:600;margin-bottom:5px}
+input[type=text],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+.show{display:flex;align-items:center;gap:8px;font-weight:500;color:var(--muted);margin:-6px 0 18px;cursor:pointer}
+.err{background:#FDECEA;border:1px solid #F5C2BD;color:var(--bad);border-radius:8px;padding:10px 12px;margin:0 0 16px;font-size:14px}
+button{width:100%;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:12px;font:600 16px Figtree,system-ui,sans-serif;cursor:pointer}
+button:hover{filter:brightness(.92)}
+:focus-visible{outline:3px solid #6BA6D8;outline-offset:2px}
+.back{display:block;text-align:center;margin-top:18px;color:#C9D8E6}
+.back:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="box">
+ <div class="brand">
+  <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#f26b0a"/><text x="20" y="30" font-family="Arial,sans-serif" font-size="27" font-weight="700" text-anchor="middle" fill="#fff">{{ store.store_name|default:"B"|first|upper }}</text></svg>
+  <span><b>{{ store.store_name|default:"Boski" }}</b><small>Store manager</small></span>
+ </div>
+
+ <main class="card">
+  <h1>Admin login</h1>
+  <p class="sub">Sign in to manage products, banners and requests.</p>
+
+  <form method="post" novalidate>
+   {% csrf_token %}
+   <input type="hidden" name="next" value="{{ next }}">
+
+   {% if form.errors %}
+    <p class="err" role="alert">
+     {% if form.non_field_errors %}{{ form.non_field_errors|join:" " }}{% else %}Please enter your username and password.{% endif %}
+    </p>
+   {% endif %}
+
+   <div class="field">
+    <label for="{{ form.username.id_for_label }}">Username</label>
+    <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" autocomplete="username" autocapitalize="none" autofocus required>
+   </div>
+   <div class="field">
+    <label for="{{ form.password.id_for_label }}">Password</label>
+    <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" autocomplete="current-password" required>
+   </div>
+   <label class="show"><input type="checkbox" id="show-pw"> Show password</label>
+
+   <button type="submit">Log in</button>
+  </form>
+ </main>
+
+ <a class="back" href="{% url 'shop:home' %}">Back to the website</a>
+</div>
+<script>
+ document.getElementById("show-pw").addEventListener("change", function () {
+   document.getElementById("{{ form.password.id_for_label }}").type = this.checked ? "text" : "password";
+ });
+</script>
+</body>
+</html>

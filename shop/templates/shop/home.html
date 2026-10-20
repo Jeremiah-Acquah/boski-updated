@@ -1,0 +1,173 @@
+{% extends "shop/base.html" %}
+
+{% block body_class %}home{% endblock %}
+
+{% block content %}
+<h1 class="sr-only">{{ store.store_name }}: imported from China, delivered in Ghana</h1>
+
+<div class="home-grid">
+  <aside class="side-menu" aria-label="Shop by category">
+    {% if categories %}
+    <ul>
+      {% for c in categories %}
+      <li><a href="{{ c.get_absolute_url }}"><svg class="ic" aria-hidden="true"><use href="#i-{{ c.icon_key }}"/></svg><span>{{ c.name }}</span><i class="chev" aria-hidden="true"></i></a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <a class="see-all" href="{% url 'shop:products' %}"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg><span>View all products</span><i class="chev" aria-hidden="true"></i></a>
+  </aside>
+
+  <div class="home-main">
+    <section class="hero" data-carousel role="region" aria-roledescription="carousel" aria-label="Featured offers">
+      <div class="hero-track">
+        {% for s in slides %}
+        <article class="hero-slide" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} of {{ slides|length }}">
+          {% if s.image %}<img class="bg" src="{{ s.image }}" alt=""{% if not forloop.first %} loading="lazy"{% endif %}>{% endif %}
+          <div class="hero-copy">
+            {% if s.eyebrow %}<p class="eyebrow">{{ s.eyebrow }}</p>{% endif %}
+            <h2>{{ s.title }}</h2>
+            {% if s.subtitle %}<p class="sub">{{ s.subtitle }}</p>{% endif %}
+            <a class="btn btn-primary" href="{{ s.url }}">{{ s.button }} <span aria-hidden="true">&rarr;</span></a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% if slides|length > 1 %}
+      <button type="button" class="hero-btn prev" aria-label="Previous slide">&#8249;</button>
+      <button type="button" class="hero-btn next" aria-label="Next slide">&#8250;</button>
+      <div class="dots">
+        {% for s in slides %}<button type="button" aria-label="Show slide {{ forloop.counter }}"{% if forloop.first %} aria-current="true"{% endif %}></button>{% endfor %}
+      </div>
+      {% endif %}
+    </section>
+
+    {% if tiles %}
+    <section class="tiles" aria-label="Shop highlights">
+      {% for t in tiles %}
+      <a class="tile" href="{{ t.category.get_absolute_url }}">
+        <img src="{{ t.image }}" alt="" loading="lazy">
+        <div class="tile-copy">
+          <h3>{{ t.lead }} {{ t.category.name }}</h3>
+          <p>Browse what is available to preorder.</p>
+          <span class="tile-link">Browse {{ t.category.name }} <span aria-hidden="true">&rarr;</span></span>
+        </div>
+      </a>
+      {% endfor %}
+    </section>
+    {% endif %}
+  </div>
+</div>
+
+<section class="trust mt" aria-label="Why shop here">
+  <div class="trust-item"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg><div><strong>Imported from China</strong><span>Cars, tricycles, electronics and more</span></div></div>
+  <a class="trust-item" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg><div><strong>Order on WhatsApp</strong><span>Chat with Boski about every order</span></div></a>
+  <div class="trust-item"><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg><div><strong>Delivery to Ghana</strong><span>Delivery time shown on each product</span></div></div>
+  <a class="trust-item" href="{% url 'shop:contact' %}#request"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><div><strong>Cannot find it?</strong><span>Request an item and Boski will look</span></div></a>
+</section>
+
+{% if featured %}
+{% url 'shop:products' as all_url %}
+{% include "shop/_block.html" with title="Featured products" items=featured more_url=all_url icon="shield" %}
+{% endif %}
+
+{% if deals %}
+{% url 'shop:products' as deals_url %}
+<section class="block block--deals">
+  <div class="block-head">
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg>Deals</h2>
+    <a href="{{ deals_url }}?deals=1">See all deals</a>
+  </div>
+  <div class="product-grid">
+    {% for p in deals %}{% include "shop/_product_card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if new_arrivals %}
+{% url 'shop:products' as new_url %}
+{% include "shop/_block.html" with title="New arrivals" items=new_arrivals more_url=new_url icon="box" %}
+{% endif %}
+
+{% for row in category_rows %}
+{% include "shop/_block.html" with title=row.category.name items=row.products more_url=row.category.get_absolute_url %}
+{% endfor %}
+
+{% if not has_products %}
+<section class="empty mt">
+  <svg class="ic" aria-hidden="true"><use href="#i-box"/></svg>
+  <h2>No products yet</h2>
+  <p>New stock is being added. Message Boski on WhatsApp and tell him what you are looking for.</p>
+  <a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat on WhatsApp</a>
+</section>
+{% endif %}
+
+<section class="cta">
+  <div>
+    <h2>Looking for something that is not listed?</h2>
+    <p>Tell Boski what you need, with a photo or link if you have one. He will check if he can source it from China.</p>
+  </div>
+  <div class="btns">
+    <a class="btn btn-primary" href="{% url 'shop:contact' %}#request">Request an item</a>
+    <a class="btn btn-outline" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">Chat on WhatsApp</a>
+  </div>
+</section>
+
+<section class="block" id="how-it-works">
+  <div class="block-head"><h2>How {{ store.store_name }} works</h2></div>
+  <ol class="how-steps">
+    <li><span class="how-icon"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><div><h3>1. Browse</h3><p>Explore vehicles and products available through {{ store.store_name }}.</p></div></li>
+    <li><span class="how-icon"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>2. Choose</h3><p>Select the product you want to source from China.</p></div></li>
+    <li><span class="how-icon">{% include "shop/_wa_icon.html" %}</span><div><h3>3. Pre-order</h3><p>Contact {{ store.store_name }} through WhatsApp and confirm your order.</p></div></li>
+    <li><span class="how-icon"><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg></span><div><h3>4. We bring it home</h3><p>{{ store.store_name }} handles the sourcing and shipping process from China to Ghana.</p></div></li>
+  </ol>
+</section>
+
+{% if recent %}
+{% include "shop/_block.html" with title="Recently viewed" items=recent icon="clock" %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var root = document.querySelector("[data-carousel]");
+    if (!root) return;
+    var track = root.querySelector(".hero-track");
+    var count = track.children.length;
+    var dots = root.querySelectorAll(".dots button");
+    var i = 0, timer = null;
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function show(n) {
+      i = (n + count) % count;
+      track.style.transform = "translateX(" + (-100 * i) + "%)";
+      dots.forEach(function (d, k) {
+        if (k === i) d.setAttribute("aria-current", "true"); else d.removeAttribute("aria-current");
+      });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function start() { if (!reduce && count > 1) { stop(); timer = setInterval(function () { show(i + 1); }, 5500); } }
+
+    var prev = root.querySelector(".prev"), next = root.querySelector(".next");
+    if (prev) prev.addEventListener("click", function () { show(i - 1); });
+    if (next) next.addEventListener("click", function () { show(i + 1); });
+    dots.forEach(function (d, k) { d.addEventListener("click", function () { show(k); }); });
+
+    root.addEventListener("mouseenter", stop);
+    root.addEventListener("mouseleave", start);
+    root.addEventListener("focusin", stop);
+    root.addEventListener("focusout", start);
+
+    var x0 = null;
+    root.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; stop(); }, { passive: true });
+    root.addEventListener("touchend", function (e) {
+      if (x0 !== null) {
+        var dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1));
+      }
+      x0 = null; start();
+    });
+    start();
+  })();
+</script>
+{% endblock %}

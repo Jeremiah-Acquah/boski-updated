@@ -1,0 +1,106 @@
+{% extends "shop/base.html" %}
+
+{% block title %}{{ title }} | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>{{ title }}</h1>
+  {% if subtitle %}<span class="meta">{{ subtitle }}</span>{% endif %}
+</div>
+
+<div class="listing">
+  <form class="filters" id="filters-form" method="get" action="{{ request.path }}">
+    <details class="filters-wrap" open data-filters{% if filters_active %} data-keep-open{% endif %}>
+      <summary class="filters-toggle"><svg class="ic" aria-hidden="true"><use href="#i-filter"/></svg>Filters<span class="caret" aria-hidden="true"></span></summary>
+      <div class="filters-body">
+        {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+        {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+
+        {% if filter_categories %}
+        <div>
+          <h3>Categories</h3>
+          <ul class="filter-cats">
+            <li><a href="{% url 'shop:products' %}"{% if not current_category %} aria-current="true"{% endif %}>All products</a></li>
+            {% for c in filter_categories %}
+            <li><a href="{{ c.get_absolute_url }}"{% if current_category and current_category.pk == c.pk %} aria-current="true"{% endif %}><span>{{ c.name }}</span><span class="n">{{ c.n }}</span></a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <div>
+          <h3>Price (GH₵)</h3>
+          <div class="range">
+            <label class="sr-only" for="min-price">Minimum price</label>
+            <input id="min-price" type="number" name="min" min="0" inputmode="numeric" placeholder="Min" value="{{ min_price }}">
+            <span aria-hidden="true">to</span>
+            <label class="sr-only" for="max-price">Maximum price</label>
+            <input id="max-price" type="number" name="max" min="0" inputmode="numeric" placeholder="Max" value="{{ max_price }}">
+          </div>
+        </div>
+
+        <label class="check"><input type="checkbox" name="deals" value="1"{% if deals_only %} checked{% endif %}> Deals only</label>
+
+        <div class="filter-actions">
+          <button class="btn btn-primary" type="submit">Apply</button>
+          {% if filters_active %}<a class="link-btn" href="{{ request.path }}{% if q %}?q={{ q|urlencode }}{% endif %}">Clear filters</a>{% endif %}
+        </div>
+      </div>
+    </details>
+  </form>
+
+  <div class="listing-main">
+    <div class="listing-top">
+      <span class="total">{{ page.paginator.count }} product{{ page.paginator.count|pluralize }}</span>
+      <div class="sort">
+        <label for="sort">Sort by</label>
+        <select id="sort" name="sort" form="filters-form" onchange="this.form.submit()">
+          {% for key, label in sorts %}<option value="{{ key }}"{% if sort == key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {% if page.object_list %}
+    <div class="product-grid">
+      {% for p in page.object_list %}{% include "shop/_product_card.html" %}{% endfor %}
+    </div>
+
+    {% if page.has_other_pages %}
+    <nav class="pager" aria-label="Pages">
+      {% if page.has_previous %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.previous_page_number }}">&larr; Previous</a>{% endif %}
+      <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.next_page_number }}">Next &rarr;</a>{% endif %}
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="empty">
+      <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+      {% if q %}
+      <h2>No match for "{{ q }}"</h2>
+      <p>Try a shorter word, or ask Boski. He can often source items that are not listed yet.</p>
+      {% elif filters_active %}
+      <h2>No products match these filters</h2>
+      <p>Try a wider price range or switch off "Deals only".</p>
+      {% elif title == "Search" %}
+      <h2>Type what you are looking for</h2>
+      <p>Use the search box at the top, for example "tricycle" or "phone".</p>
+      {% else %}
+      <h2>Nothing here yet</h2>
+      <p>Products are added regularly. Message Boski and tell him what you want to order.</p>
+      {% endif %}
+      <a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Ask on WhatsApp</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var d = document.querySelector("[data-filters]");
+    if (d && window.matchMedia("(max-width: 959px)").matches && !d.hasAttribute("data-keep-open")) d.removeAttribute("open");
+  })();
+</script>
+{% endblock %}

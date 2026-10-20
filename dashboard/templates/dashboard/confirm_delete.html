@@ -1,0 +1,13 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Delete {{ cfg.singular }}{% endblock %}
+{% block content %}
+<header class="top"><h1>Delete this {{ cfg.singular }}?</h1></header>
+<div class="card" style="max-width:560px">
+ <p><strong>{{ obj }}</strong> will be removed from the website and cannot be brought back.</p>
+ <form method="post" class="actions">
+  {% csrf_token %}
+  <button class="btn danger" type="submit">Delete {{ cfg.singular }}</button>
+  <a class="btn ghost" href="{% url 'dashboard:list' key %}">Keep it</a>
+ </form>
+</div>
+{% endblock %}

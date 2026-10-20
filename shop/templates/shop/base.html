@@ -1,0 +1,198 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ store.store_name }}: imported from China, delivered in Ghana{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ store.tagline }}{% endblock %}">
+  <meta name="theme-color" content="#c94f00">
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+  {% block og %}
+  <meta property="og:site_name" content="{{ store.store_name }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ store.store_name }}: imported from China, delivered in Ghana">
+  <meta property="og:description" content="{{ store.tagline }}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  {% endblock %}
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f26b0a'/%3E%3Ctext x='16' y='24' font-size='22' font-family='Arial,sans-serif' font-weight='700' text-anchor='middle' fill='white'%3EB%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body class="{% block body_class %}{% endblock %}" data-page="{{ request.resolver_match.url_name }}">
+  {% include "shop/_sprite.html" %}
+  {% with page=request.resolver_match.url_name %}
+
+  <a class="sr-only" href="#content">Skip to content</a>
+
+  {% if store.announcement or store.phone_display %}
+  <div class="utility">
+    <div class="wrap utility-inner">
+      <p>{{ store.announcement }}</p>
+      <div class="utility-links">
+        <a href="{% url 'shop:faq' %}">Help</a>
+        <a href="{% url 'shop:contact' %}">Contact</a>
+        <a href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp {{ store.phone_display }}</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <header class="site-header">
+    <div class="mainbar">
+      <div class="wrap mainbar-inner">
+        <details class="mnav">
+          <summary aria-label="Menu"><svg class="ic ic-open" aria-hidden="true"><use href="#i-menu"/></svg><svg class="ic ic-close" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></summary>
+          <nav class="mnav-panel" aria-label="Menu">
+            <a href="{% url 'shop:home' %}"{% if page == 'home' %} aria-current="page"{% endif %}>Home</a>
+            <a href="{% url 'shop:products' %}"{% if page == 'products' %} aria-current="page"{% endif %}>Products</a>
+            <a class="deal-link" href="{% url 'shop:products' %}?deals=1">Deals</a>
+            <a href="{% url 'shop:categories' %}"{% if page == 'categories' or page == 'category' %} aria-current="page"{% endif %}>All categories</a>
+            {% if nav_categories %}
+            <p class="mnav-title">Shop by category</p>
+            <div class="mnav-cats">
+              {% for c in nav_categories %}<a href="{{ c.get_absolute_url }}"><svg class="ic" aria-hidden="true"><use href="#i-{{ c.icon_key }}"/></svg>{{ c.name }}</a>{% endfor %}
+            </div>
+            {% endif %}
+            <p class="mnav-title">More</p>
+            <a href="{% url 'shop:home' %}#how-it-works">How it works</a>
+            <a href="{% url 'shop:faq' %}"{% if page == 'faq' %} aria-current="page"{% endif %}>Help</a>
+            <a href="{% url 'shop:contact' %}"{% if page == 'contact' %} aria-current="page"{% endif %}>Contact</a>
+            <a class="mnav-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat with {{ store.store_name }}</a>
+          </nav>
+        </details>
+        <a class="brand" href="{% url 'shop:home' %}" aria-label="{{ store.store_name }} home">
+          <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#f26b0a"/><text x="20" y="30" font-family="Poppins, Arial, sans-serif" font-size="27" font-weight="700" text-anchor="middle" fill="#fff">{{ store.store_name|first|upper }}</text></svg>
+          <span class="brand-text"><b>{{ store.store_name|lower }}</b><small>Imported from China</small></span>
+        </a>
+
+        <form class="search" role="search" action="{% url 'shop:search' %}" method="get">
+          <label class="sr-only" for="search-cat">Category</label>
+          <select id="search-cat" name="category">
+            <option value="">All Categories</option>
+            {% for c in nav_categories %}<option value="{{ c.slug }}"{% if current_category and current_category.pk == c.pk %} selected{% endif %}>{{ c.name }}</option>{% endfor %}
+          </select>
+          <label class="sr-only" for="search-q">Search products</label>
+          <input id="search-q" type="search" name="q" value="{{ q|default:'' }}" placeholder="Search products, brands and categories">
+          <button type="submit"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><span>Search</span></button>
+        </form>
+
+        <div class="actions">
+          <a class="action-link" href="{% url 'shop:wishlist' %}" aria-label="Saved items">
+            <svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg><span class="label">Saved</span>
+            <span class="count" data-wish-count{% if not wishlist_count %} hidden{% endif %}>{{ wishlist_count }}</span>
+          </a>
+          <a class="action-link" href="{% url 'shop:cart' %}" aria-label="Preorder list">
+            <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg><span class="label">Preorder list</span>
+            <span class="count"{% if not cart_count %} hidden{% endif %}>{{ cart_count }}</span>
+          </a>
+          <a class="wa-btn" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat with Boski</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <div class="wrap navbar-inner">
+        <details class="allcats">
+          <summary>
+            <svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg>
+            <span>All Categories</span>
+            <span class="caret" aria-hidden="true"></span>
+          </summary>
+          <div class="allcats-menu">
+            <ul>
+              {% for c in nav_categories %}
+              <li><a href="{{ c.get_absolute_url }}"><svg class="ic" aria-hidden="true"><use href="#i-{{ c.icon_key }}"/></svg>{{ c.name }}</a></li>
+              {% endfor %}
+            </ul>
+            <a class="all-link" href="{% url 'shop:products' %}">View all products</a>
+          </div>
+        </details>
+
+        <nav class="main-nav" aria-label="Main">
+          <a href="{% url 'shop:home' %}"{% if page == 'home' %} aria-current="page"{% endif %}>Home</a>
+          <a href="{% url 'shop:products' %}"{% if page == 'products' %} aria-current="page"{% endif %}>Products</a>
+          <a class="deal-link" href="{% url 'shop:products' %}?deals=1">Deals</a>
+          <a href="{% url 'shop:categories' %}"{% if page == 'categories' or page == 'category' %} aria-current="page"{% endif %}>Categories</a>
+          <a href="{% url 'shop:home' %}#how-it-works">How it works</a>
+          <a href="{% url 'shop:faq' %}"{% if page == 'faq' %} aria-current="page"{% endif %}>Help</a>
+          <a href="{% url 'shop:contact' %}"{% if page == 'contact' %} aria-current="page"{% endif %}>Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+  {% endwith %}
+
+  <main class="wrap" id="content">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="flash{% if message.tags == 'error' %} error{% endif %}" role="status">
+      <svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>
+      <span>{{ message }}</span>
+      {% if 'preorder list' in message.message %}<a href="{% url 'shop:cart' %}">View list</a>{% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="{% url 'shop:home' %}">
+          <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#f26b0a"/><text x="20" y="30" font-family="Poppins, Arial, sans-serif" font-size="27" font-weight="700" text-anchor="middle" fill="#fff">{{ store.store_name|first|upper }}</text></svg>
+          <span class="brand-text"><b>{{ store.store_name|lower }}</b><small>Imported from China</small></span>
+        </a>
+        <p>{{ store.tagline }}</p>
+        <a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat on WhatsApp</a>
+        {% if store.facebook_url or store.instagram_url or store.tiktok_url %}
+        <div class="socials">
+          {% if store.facebook_url %}<a href="{{ store.facebook_url }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+          {% if store.instagram_url %}<a href="{{ store.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+          {% if store.tiktok_url %}<a href="{{ store.tiktok_url }}" target="_blank" rel="noopener">TikTok</a>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+      <div>
+        <h2>Shop</h2>
+        <ul>
+          {% for c in nav_categories %}<li><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>{% endfor %}
+          <li><a href="{% url 'shop:products' %}">All products</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Help</h2>
+        <ul>
+          <li><a href="{% url 'shop:home' %}#how-it-works">How it works</a></li>
+          <li><a href="{% url 'shop:faq' %}">Questions and answers</a></li>
+          <li><a href="{% url 'shop:contact' %}#request">Request an item</a></li>
+          <li><a href="{% url 'shop:cart' %}">Preorder list</a></li>
+          <li><a href="{% url 'shop:about' %}">About {{ store.store_name }}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul>
+          <li><a href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp {{ store.phone_display }}</a></li>
+          {% if store.email %}<li><a href="mailto:{{ store.email }}">{{ store.email }}</a></li>{% endif %}
+          {% if store.location %}<li>{{ store.location }}</li>{% endif %}
+          {% if store.working_hours %}<li>{{ store.working_hours }}</li>{% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="wrap">
+        <span>&copy; {% now "Y" %} {{ store.store_name }}. All products are imported on preorder.</span>
+        <span class="footer-bottom-links">
+          {% if user.is_staff %}<a class="admin-link" href="{% url 'dashboard:home' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Go to dashboard</a>{% else %}<a class="admin-link" href="{% url 'dashboard:login' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Admin</a>{% endif %}
+          <a class="to-top" href="#top" onclick="window.scrollTo({top:0});return false;"><svg class="ic" aria-hidden="true"><use href="#i-arrow-up"/></svg>Back to top</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'shop/app.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

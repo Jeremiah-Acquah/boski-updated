@@ -1,0 +1,38 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+<header class="top">
+ <div><h1>Overview</h1><p class="sub">What is on the website right now.</p></div>
+ <a class="btn" href="{% url 'dashboard:create' 'products' %}">Add product</a>
+</header>
+
+<div class="stats">
+ {% for c in cards %}
+  <a class="stat" href="{% url 'dashboard:list' c.key %}">
+   <b>{{ c.total }}</b><span>{{ c.label }}{% if c.live is not None %}, {{ c.live }} on website{% endif %}</span>
+  </a>
+ {% endfor %}
+ <a class="stat" href="{% url 'dashboard:list' 'products' %}"><b>{{ featured }}</b><span>Featured on home page</span></a>
+</div>
+
+<section class="card">
+ <h2>Customer requests waiting for a reply</h2>
+ {% for r in waiting %}
+  <div class="wait">
+   <div>
+    <p><strong>{{ r.name }}</strong> is looking for {{ r.item|truncatechars:80 }}</p>
+    <p class="meta">{{ r.phone }}{% if r.budget %} · Budget {{ r.budget }}{% endif %} · {{ r.created_at|timesince }} ago</p>
+   </div>
+   <div class="actions">
+    <a class="btn sm" href="{{ r.reply_url }}" target="_blank" rel="noopener">Reply on WhatsApp</a>
+    <form method="post" action="{% url 'dashboard:toggle' 'requests' r.pk 'is_handled' %}">
+     {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+     <button class="btn ghost sm" type="submit">Mark handled</button>
+    </form>
+   </div>
+  </div>
+ {% empty %}
+  <p class="sub">You are all caught up. New requests from the website will show here.</p>
+ {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,27 @@
+<article class="product-card">
+  <a class="card-link" href="{{ p.get_absolute_url }}">
+    <div class="photo">
+      <div class="badges">
+        {% if p.has_discount %}<span class="badge badge-sale">-{{ p.discount_percent }}%</span>{% endif %}
+        {% if p.is_new %}<span class="badge badge-new">New</span>{% elif p.is_featured and not p.has_discount %}<span class="badge badge-featured">Featured</span>{% endif %}
+      </div>
+      <img src="{{ p.main_image.url }}" alt="{{ p.name }}" loading="lazy">
+    </div>
+    <div class="info">
+      <h3>{{ p.name }}</h3>
+      <p class="cat">{{ p.category.name }}</p>
+      <div class="price-row">
+        <span class="price">{{ p.price_display }}</span>
+        {% if p.has_discount %}<span class="old-price">{{ p.old_price_display }}</span>{% endif %}
+      </div>
+    </div>
+    <span class="view-btn">View</span>
+  </a>
+  <form class="wish-form" method="post" action="{% url 'shop:wishlist_toggle' p.pk %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <button type="submit" class="wish-btn{% if p.pk in wishlist_set %} is-on{% endif %}" aria-pressed="{% if p.pk in wishlist_set %}true{% else %}false{% endif %}" aria-label="{% if p.pk in wishlist_set %}Remove {{ p.name }} from saved items{% else %}Save {{ p.name }} for later{% endif %}">
+      <svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg>
+    </button>
+  </form>
+</article>

@@ -1,0 +1,10 @@
+{# Usage: include with title, items, more_url, [icon] #}
+<section class="block {{ extra_class }}">
+  <div class="block-head">
+    <h2>{% if icon %}<svg class="ic" aria-hidden="true"><use href="#i-{{ icon }}"/></svg>{% endif %}{{ title }}</h2>
+    {% if more_url %}<a href="{{ more_url }}">See all</a>{% endif %}
+  </div>
+  <div class="product-grid">
+    {% for p in items %}{% include "shop/_product_card.html" %}{% endfor %}
+  </div>
+</section>
