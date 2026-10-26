@@ -2,16 +2,12 @@
 (function () {
   "use strict";
 
-  // Close the dropdown menus (desktop All Categories, phone hamburger) when clicking elsewhere,
-  // pressing Escape, or tapping a link inside them
-  var menus = document.querySelectorAll(".allcats, .mnav");
-  menus.forEach(function (menu) {
+  // Close the All Categories menu when clicking elsewhere or pressing Escape
+  var menu = document.querySelector(".allcats");
+  if (menu) {
     document.addEventListener("click", function (e) { if (!menu.contains(e.target)) menu.removeAttribute("open"); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") menu.removeAttribute("open"); });
-    menu.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest("a")) menu.removeAttribute("open");
-    });
-  });
+  }
 
   // Save / unsave a product without reloading the page
   document.addEventListener("submit", function (e) {
@@ -55,9 +51,10 @@
     var btn = e.target.closest ? e.target.closest("[data-copy]") : null;
     if (!btn) return;
     var done = function () {
-      var old = btn.textContent;
-      btn.textContent = "Link copied";
-      setTimeout(function () { btn.textContent = old; }, 1800);
+      var label = btn.querySelector("span") || btn;
+      var old = label.textContent;
+      label.textContent = "Link copied";
+      setTimeout(function () { label.textContent = old; }, 1800);
     };
     if (navigator.clipboard) navigator.clipboard.writeText(btn.dataset.copy).then(done);
     else { window.prompt("Copy this link:", btn.dataset.copy); }

@@ -55,7 +55,7 @@
  <div class="savebar">
   <button class="btn" type="submit">Save {{ cfg.singular }}</button>
   {% if not singleton %}<a class="btn ghost" href="{{ back_url }}">Cancel</a>{% endif %}
-  {% if instance %}<a class="btn ghost" href="{% url 'dashboard:delete' key instance.pk %}">Delete {{ cfg.singular }}</a>{% endif %}
  </div>
+ {% if instance %}<p class="delete-row"><a class="btn ghost" href="{% url 'dashboard:delete' key instance.pk %}">Delete {{ cfg.singular }}</a></p>{% endif %}
 </form>
 {% endblock %}

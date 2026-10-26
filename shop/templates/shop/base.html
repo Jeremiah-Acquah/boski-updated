@@ -34,6 +34,7 @@
         <a href="{% url 'shop:faq' %}">Help</a>
         <a href="{% url 'shop:contact' %}">Contact</a>
         <a href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp {{ store.phone_display }}</a>
+        {% if user.is_staff %}<a class="admin-link" href="{% url 'dashboard:home' %}">Dashboard</a>{% else %}<a class="admin-link" href="{% url 'dashboard:login' %}">Admin login</a>{% endif %}
       </div>
     </div>
   </div>
@@ -42,26 +43,6 @@
   <header class="site-header">
     <div class="mainbar">
       <div class="wrap mainbar-inner">
-        <details class="mnav">
-          <summary aria-label="Menu"><svg class="ic ic-open" aria-hidden="true"><use href="#i-menu"/></svg><svg class="ic ic-close" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></summary>
-          <nav class="mnav-panel" aria-label="Menu">
-            <a href="{% url 'shop:home' %}"{% if page == 'home' %} aria-current="page"{% endif %}>Home</a>
-            <a href="{% url 'shop:products' %}"{% if page == 'products' %} aria-current="page"{% endif %}>Products</a>
-            <a class="deal-link" href="{% url 'shop:products' %}?deals=1">Deals</a>
-            <a href="{% url 'shop:categories' %}"{% if page == 'categories' or page == 'category' %} aria-current="page"{% endif %}>All categories</a>
-            {% if nav_categories %}
-            <p class="mnav-title">Shop by category</p>
-            <div class="mnav-cats">
-              {% for c in nav_categories %}<a href="{{ c.get_absolute_url }}"><svg class="ic" aria-hidden="true"><use href="#i-{{ c.icon_key }}"/></svg>{{ c.name }}</a>{% endfor %}
-            </div>
-            {% endif %}
-            <p class="mnav-title">More</p>
-            <a href="{% url 'shop:home' %}#how-it-works">How it works</a>
-            <a href="{% url 'shop:faq' %}"{% if page == 'faq' %} aria-current="page"{% endif %}>Help</a>
-            <a href="{% url 'shop:contact' %}"{% if page == 'contact' %} aria-current="page"{% endif %}>Contact</a>
-            <a class="mnav-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">{% include "shop/_wa_icon.html" %}Chat with {{ store.store_name }}</a>
-          </nav>
-        </details>
         <a class="brand" href="{% url 'shop:home' %}" aria-label="{{ store.store_name }} home">
           <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#f26b0a"/><text x="20" y="30" font-family="Poppins, Arial, sans-serif" font-size="27" font-weight="700" text-anchor="middle" fill="#fff">{{ store.store_name|first|upper }}</text></svg>
           <span class="brand-text"><b>{{ store.store_name|lower }}</b><small>Imported from China</small></span>
@@ -185,7 +166,7 @@
       <div class="wrap">
         <span>&copy; {% now "Y" %} {{ store.store_name }}. All products are imported on preorder.</span>
         <span class="footer-bottom-links">
-          {% if user.is_staff %}<a class="admin-link" href="{% url 'dashboard:home' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Go to dashboard</a>{% else %}<a class="admin-link" href="{% url 'dashboard:login' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Admin</a>{% endif %}
+          {% if user.is_staff %}<a class="admin-link" href="{% url 'dashboard:home' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Go to dashboard</a>{% else %}<a class="admin-link" href="{% url 'dashboard:login' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Admin login</a>{% endif %}
           <a class="to-top" href="#top" onclick="window.scrollTo({top:0});return false;"><svg class="ic" aria-hidden="true"><use href="#i-arrow-up"/></svg>Back to top</a>
         </span>
       </div>

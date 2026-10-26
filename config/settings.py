@@ -59,16 +59,14 @@ if not SECRET_KEY:
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
-# The Django admin is only a backup now. Boski works in the dashboard; anyone who opens /admin/ is
-# sent there (see config/urls.py). So the real Django admin lives at a different address.
-# Set DJANGO_ADMIN_URL=some-secret-name/ to change it.
-ADMIN_URL = os.environ.get("DJANGO_ADMIN_URL", "django-admin/").strip("/") + "/"
+# The admin lives at /admin/ by default. Set DJANGO_ADMIN_URL=some-secret-name/ to hide it a little.
+ADMIN_URL = os.environ.get("DJANGO_ADMIN_URL", "admin/").strip("/") + "/"
 
-# Boski's dashboard (the easy editing pages) lives here.
+# Boski's dashboard (the easy editing pages) lives here. The Django admin must use a different address.
 DASHBOARD_URL = os.environ.get("DJANGO_DASHBOARD_URL", "manage/").strip("/") + "/"
-if ADMIN_URL in ("admin/", DASHBOARD_URL):
-    # /admin/ now belongs to the redirect, and the dashboard needs its own address.
-    ADMIN_URL = "django-admin/" if DASHBOARD_URL != "django-admin/" else "backend-admin/"
+if ADMIN_URL == DASHBOARD_URL:
+    # Same address would hide the dashboard behind the admin, so the admin steps aside.
+    ADMIN_URL = "admin/" if DASHBOARD_URL != "admin/" else "django-admin/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

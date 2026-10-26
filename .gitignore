@@ -1,7 +1,14 @@
 .env
-db.sqlite3
+seed/db.sqlite3
 staticfiles/
 __pycache__/
 *.pyc
 venv/
 .venv/
+railway_db_before_restore.sqlite3
+railway_gallery_backup/
+media/
+
+# Local database and backup files
+db.sqlite3
+db_before_restore_backup.sqlite3

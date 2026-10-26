@@ -20,8 +20,8 @@
  {% endif %}
 </div>
 
-<div class="tablewrap">
 {% if rows %}
+<div class="tablewrap">
 <table>
  <thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}<th></th></tr></thead>
  <tbody>
@@ -48,14 +48,53 @@
  {% endfor %}
  </tbody>
 </table>
+</div>
+
+{# Phone view: one card per item, big tap targets #}
+<ul class="cards">
+ {% for row in rows %}
+ <li class="item">
+  <div class="item-top">
+   {% for c in row.cells %}{% if c.kind == "image" %}{% if c.value %}<img src="{{ c.value }}" alt="" loading="lazy">{% else %}<span class="noimg"></span>{% endif %}{% endif %}{% endfor %}
+   <div class="item-main">
+    {% for c in row.cells %}{% if c.link %}<a class="name" href="{% url 'dashboard:edit' key row.obj.pk %}">{{ c.value }}</a>{% endif %}{% endfor %}
+    {% for c in row.cells %}{% if c.label == "Price" %}<p class="price">{{ c.value }}</p>{% endif %}{% endfor %}
+    {% for c in row.cells %}
+     {% if c.link or c.kind == "image" or c.kind == "toggle" or c.kind == "link" or c.label == "Price" %}
+     {% elif c.label == "Phone" %}<p class="meta"><b>Phone:</b> <a class="tel" href="tel:{{ c.value }}">{{ c.value }}</a></p>
+     {% elif c.kind == "date" %}<p class="meta">{{ c.value|date:"j M Y, H:i" }}</p>
+     {% elif c.kind == "bool" %}<p class="meta"><b>{{ c.label }}:</b> {% if c.value %}Yes{% else %}No{% endif %}</p>
+     {% else %}<p class="meta"><b>{{ c.label }}:</b> {{ c.value }}</p>{% endif %}
+    {% endfor %}
+   </div>
+  </div>
+
+  {% if cfg.toggles %}
+  <div class="trows">
+   {% for c in row.cells %}{% if c.kind == "toggle" %}
+    <form method="post" action="{% url 'dashboard:toggle' key row.obj.pk c.field %}">
+     {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+     <button type="submit" class="trow" role="switch" aria-checked="{% if c.value %}true{% else %}false{% endif %}"><span>{{ c.label }}</span><span class="tg {% if c.value %}on{% endif %}"></span></button>
+    </form>
+   {% endif %}{% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="item-actions">
+   {% for c in row.cells %}{% if c.kind == "link" and c.value %}<a class="btn wa" href="{{ c.value }}" target="_blank" rel="noopener">Reply on WhatsApp</a>{% endif %}{% endfor %}
+   <a class="btn ghost" href="{% url 'dashboard:edit' key row.obj.pk %}">Edit</a>
+   <a class="btn ghost" href="{% url 'dashboard:delete' key row.obj.pk %}">Delete</a>
+  </div>
+ </li>
+ {% endfor %}
+</ul>
 {% else %}
- <div class="empty">
+ <div class="empty card">
   {% if q or pending %}<p>Nothing matches that search.</p>
   {% else %}<p>No {{ cfg.label|lower }} yet.</p>
   {% if can_create %}<a class="btn" href="{% url 'dashboard:create' key %}">Add your first {{ cfg.singular }}</a>{% endif %}{% endif %}
  </div>
 {% endif %}
-</div>
 
 {% if page.has_other_pages %}
 <div class="pager">

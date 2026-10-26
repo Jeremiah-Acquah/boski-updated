@@ -80,14 +80,16 @@
     </div>
 
     <div class="share">
-      <form class="wish-form-inline" method="post" action="{% url 'shop:wishlist_toggle' product.pk %}" style="position:static">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" class="wish-btn{% if product.pk in wishlist_set %} is-on{% endif %}" aria-pressed="{% if product.pk in wishlist_set %}true{% else %}false{% endif %}" aria-label="Save for later"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></button>
-      </form>
-      <span>Save for later</span>
-      <a href="https://wa.me/?text={{ product.name|urlencode }}%20{{ absolute_url|urlencode }}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg>Share on WhatsApp</a>
-      <button type="button" data-copy="{{ absolute_url }}">Copy link</button>
+      <div class="share-item share-save">
+        <form class="wish-form-inline" method="post" action="{% url 'shop:wishlist_toggle' product.pk %}" style="position:static">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit" class="wish-btn{% if product.pk in wishlist_set %} is-on{% endif %}" aria-pressed="{% if product.pk in wishlist_set %}true{% else %}false{% endif %}" aria-label="Save for later"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></button>
+        </form>
+        <span>Save for later</span>
+      </div>
+      <a class="share-item" href="https://wa.me/?text={{ product.name|urlencode }}%20{{ absolute_url|urlencode }}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg><span>Share on WhatsApp</span></a>
+      <button class="share-item" type="button" data-copy="{{ absolute_url }}"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><span>Copy link</span></button>
     </div>
   </div>
 </div>

@@ -175,7 +175,7 @@ def item_list(request, section):
     toggles = cfg.get("toggles", [])
     rows = []
     for obj in page.object_list:
-        cells = [cell(obj, name, toggles) for name, _ in cfg["columns"]]
+        cells = [{**cell(obj, name, toggles), "label": label} for name, label in cfg["columns"]]
         first_text = next((c for c in cells if c["kind"] == "text"), None)
         if first_text:
             first_text["link"] = True

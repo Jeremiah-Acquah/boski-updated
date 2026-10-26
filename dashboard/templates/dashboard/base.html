@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{% block title %}Dashboard{% endblock %} · Boski Imports</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,7 +63,11 @@ td .name{font-weight:600;color:var(--ink);text-decoration:none}
 .pager{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:16px;color:var(--muted)}
 form.stack fieldset{border:0;padding:0;margin:0 0 22px}
 .stack .card{margin-bottom:18px}
-.stack legend{font-weight:700;font-size:17px;padding:0;margin-bottom:12px}
+.stack fieldset.card{display:flow-root;min-width:0;padding:20px}
+.stack legend{float:left;width:100%;font-weight:700;font-size:17px;padding:0;margin:0 0 12px}
+.stack legend + *{clear:both}
+.delete-row{margin:6px 0 24px}
+.delete-row .btn{color:var(--bad);border-color:#E7B9B5}
 .field{margin-bottom:14px}
 .field label{display:block;font-weight:600;margin-bottom:4px}
 .field.check label{display:flex;gap:10px;align-items:center;font-weight:500}
@@ -72,15 +76,115 @@ form.stack fieldset{border:0;padding:0;margin:0 0 22px}
 input[type=text],input[type=number],input[type=email],input[type=url],input[type=search],input[type=tel],select,textarea{width:100%;max-width:560px;padding:9px 11px;border:1px solid #BCC8D4;border-radius:8px;font:inherit;background:#fff}
 textarea{max-width:100%}
 .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.gallery .item{border:1px solid var(--line);border-radius:8px;padding:12px}
+.gallery .item{border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0;overflow-wrap:anywhere}
 .gallery input[type=text],.gallery input[type=number]{max-width:100%}
 .savebar{display:flex;gap:10px;align-items:center;position:sticky;bottom:0;background:var(--bg);padding:14px 0}
-@media(max-width:820px){
- .shell{grid-template-columns:1fr}
- .side{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px;gap:4px}
- .side .brand,.side .gap{display:none}.side a,.side button{white-space:nowrap;width:auto}
-}
 @media(prefers-reduced-motion:reduce){.sw::after{transition:none}}
+
+/* ---------- phone-only parts are hidden on desktop ---------- */
+.mtop,.mnav,.sheet,.cards{display:none}
+.trow{all:unset}
+
+/* ---------- phones and small tablets ---------- */
+@media(max-width:820px){
+ :root{--navh:62px}
+ html{-webkit-text-size-adjust:100%}
+ .shell{display:block}
+ .side{display:none}
+
+ .mtop{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:30;background:var(--navy);color:#fff;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+ .mtop b{font-size:17px;line-height:1.2}
+ .mtop small{display:block;font-size:12px;color:#9FB6CC;font-weight:400}
+ .mtop a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:8px 12px;font-weight:600;font-size:14px;min-height:40px;display:inline-flex;align-items:center}
+
+ main{padding:16px 14px calc(var(--navh) + 28px + env(safe-area-inset-bottom,0px));max-width:none}
+ h1{font-size:23px}
+ .top{margin-bottom:14px;align-items:center}
+ .top .btn{min-height:44px;display:inline-flex;align-items:center}
+ .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+ .btn.sm{min-height:40px;padding:6px 14px}
+ .card{padding:16px}
+ .msgs li{font-size:15px}
+
+ /* bottom tab bar */
+ .mnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 14px rgba(15,43,70,.08)}
+ .mnav a,.mnav button{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--navh);padding:6px 2px;color:var(--muted);font:600 12px/1.2 Figtree,system-ui,sans-serif;cursor:pointer;position:relative;text-align:center}
+ .mnav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ .mnav .on{color:var(--accent)}
+ .mnav .on::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+ .mnav .badge{position:absolute;top:5px;left:calc(50% + 6px);min-width:18px;text-align:center;padding:0 5px;font-size:11px}
+ .mnav a:focus-visible,.mnav button:focus-visible{outline:3px solid #6BA6D8;outline-offset:-3px}
+
+ /* "More" sheet */
+ .sheet{position:fixed;inset:0;z-index:50;display:none}
+ .sheet.open{display:block}
+ .sheet .bd{position:absolute;inset:0;background:rgba(15,43,70,.55)}
+ .sheet .panel{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:16px 16px 0 0;padding:8px 14px calc(16px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow-y:auto}
+ .sheet h2{margin:10px 4px 6px;font-size:16px}
+ .sheet a,.sheet button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:52px;padding:0 6px;border-bottom:1px solid var(--line);color:var(--ink);font:500 16px Figtree,system-ui,sans-serif;cursor:pointer}
+ .sheet a:focus-visible,.sheet button:focus-visible{outline:3px solid #6BA6D8;outline-offset:-3px}
+ .sheet .danger{color:var(--bad);border-bottom:0}
+ .sheet .handle{width:44px;height:5px;border-radius:3px;background:#C7D1DB;margin:6px auto 4px}
+
+ /* overview */
+ .stats{grid-template-columns:1fr 1fr;gap:10px}
+ .stat{padding:14px}
+ .stat b{font-size:26px}
+ .wait{flex-direction:column;align-items:stretch;gap:10px}
+ .wait .actions{display:grid;grid-template-columns:1fr 1fr}
+ .wait .actions form,.wait .actions .btn{width:100%}
+ .wait .actions .btn{padding:6px 8px;font-size:14px}
+
+ /* lists become cards */
+ .tablewrap{display:none}
+ .tools{flex-direction:column;gap:10px}
+ .tools form{display:flex!important;gap:8px;width:100%}
+ .tools input[type=search]{min-width:0;min-height:46px}
+ .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ .tabs a{text-align:center;border:1px solid var(--line);background:#fff;min-height:44px;display:flex;align-items:center;justify-content:center}
+ .tabs a.on{border-color:var(--accent);color:var(--accent)}
+ .cards{display:grid;gap:12px;list-style:none;margin:0;padding:0}
+ .item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+ .item-top{display:flex;gap:12px;align-items:flex-start}
+ .item-top img{width:72px;height:72px;object-fit:cover;border-radius:8px;flex:none;background:#E6EBF0}
+ .item-top .noimg{width:72px;height:72px;border-radius:8px;flex:none;background:#E6EBF0}
+ .item-main{min-width:0;flex:1}
+ .item-main .name{display:block;font-weight:700;font-size:16px;line-height:1.3;color:var(--ink);text-decoration:none;overflow-wrap:anywhere}
+ .item-main .meta{margin:4px 0 0;color:var(--muted);font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+ .item-main .meta b{color:var(--ink);font-weight:600}
+ .item-main .price{margin:2px 0 0;font-weight:700;font-size:16px}
+ .item-main a.tel{color:var(--navy2);font-weight:600}
+ .trows{margin-top:10px;border-top:1px solid var(--line)}
+ .trow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;cursor:pointer;font:500 15px Figtree,system-ui,sans-serif;color:var(--ink);box-sizing:border-box}
+ .trow + .trow,form + form .trow{border-top:1px solid var(--line)}
+ .trow:focus-visible{outline:3px solid #6BA6D8;outline-offset:2px;border-radius:6px}
+ .tg{width:52px;height:30px;border-radius:99px;background:#B8C4D0;position:relative;flex:none}
+ .tg::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .15s}
+ .tg.on{background:var(--ok)}.tg.on::after{transform:translateX(22px)}
+ .item-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+ .item-actions .btn{width:100%}
+ .item-actions .wa{grid-column:1 / -1;background:var(--ok);color:#fff;border-color:var(--ok)}
+ .pager{flex-wrap:wrap}
+ .pager .btn{flex:1}
+
+ /* forms */
+ form.stack fieldset{margin-bottom:14px}
+ .stack fieldset.card{padding:16px}
+ .stack legend{font-size:16px}
+ input[type=text],input[type=number],input[type=email],input[type=url],input[type=search],input[type=tel],select,textarea{max-width:none;font-size:16px;min-height:46px;padding:10px 12px}
+ textarea{min-height:110px}
+ input[type=file]{width:100%;font-size:15px;padding:8px 0}
+ .field.check label{min-height:44px;font-size:16px}
+ .field.check input{width:22px;height:22px;flex:none}
+ .gallery{grid-template-columns:1fr}
+ .savebar{position:sticky;bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px));z-index:20;display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 14px;margin:0 -14px;background:#EEF2F6;border-top:1px solid var(--line)}
+ .savebar .btn{min-height:50px;font-size:16px}
+ .savebar .btn:only-child{grid-column:1 / -1}
+ .delete-row .btn{width:100%}
+ .confirm .actions{display:grid;grid-template-columns:1fr;gap:10px}
+ .confirm .btn{width:100%}
+}
+@media(max-width:360px){.stats{grid-template-columns:1fr}.mnav a,.mnav button{font-size:11px}}
 </style>
 </head>
 <body>
@@ -98,10 +202,47 @@ textarea{max-width:100%}
   <a href="{% url 'admin:index' %}">Advanced admin</a>
   <form method="post" action="{% url 'dashboard:logout' %}">{% csrf_token %}<button type="submit">Log out</button></form>
  </nav>
+   <header class="mtop">
+   <div><b>Boski Imports</b><small>Store manager</small></div>
+   <a href="/" target="_blank" rel="noopener">View website</a>
+  </header>
  <main>
   {% if messages %}<ul class="msgs" role="status">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
   {% block content %}{% endblock %}
  </main>
+
+ <nav class="mnav" aria-label="Main">
+  <a href="{% url 'dashboard:home' %}" class="{% if active == 'home' %}on{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Overview</a>
+  <a href="{% url 'dashboard:list' 'products' %}" class="{% if active == 'products' %}on{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>Products</a>
+  <a href="{% url 'dashboard:list' 'requests' %}" class="{% if active == 'requests' %}on{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Requests{% if pending_requests %}<span class="badge">{{ pending_requests }}</span>{% endif %}</a>
+  <a href="{% url 'dashboard:list' 'banners' %}" class="{% if active == 'banners' %}on{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg>Banners</a>
+  <button type="button" id="more-btn" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false" class="{% if active == 'categories' or active == 'faqs' or active == 'settings' %}on{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
+ </nav>
+
+ <div class="sheet" id="more-sheet" role="dialog" aria-modal="true" aria-label="More">
+  <div class="bd" data-close></div>
+  <div class="panel">
+   <div class="handle"></div>
+   <h2>More</h2>
+   <a href="{% url 'dashboard:list' 'categories' %}">Categories</a>
+   <a href="{% url 'dashboard:list' 'faqs' %}">FAQs</a>
+   <a href="{% url 'dashboard:settings' %}">Store settings</a>
+   <a href="/" target="_blank" rel="noopener">View website</a>
+   <a href="{% url 'admin:index' %}">Advanced admin</a>
+   <form method="post" action="{% url 'dashboard:logout' %}">{% csrf_token %}<button type="submit" class="danger">Log out</button></form>
+   <button type="button" data-close style="justify-content:center;color:var(--muted);border-bottom:0">Close</button>
+  </div>
+ </div>
+ <script>
+ (function(){
+  var btn=document.getElementById("more-btn"), sheet=document.getElementById("more-sheet");
+  if(!btn||!sheet) return;
+  function set(open){ sheet.classList.toggle("open",open); btn.setAttribute("aria-expanded",open?"true":"false"); if(open){ var f=sheet.querySelector("a"); if(f) f.focus(); } else btn.focus(); }
+  btn.addEventListener("click",function(){ set(true); });
+  sheet.addEventListener("click",function(e){ if(e.target.closest("[data-close]")) set(false); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&sheet.classList.contains("open")) set(false); });
+ })();
+ </script>
 </div>
 </body>
 </html>

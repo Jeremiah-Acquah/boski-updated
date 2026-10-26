@@ -2,7 +2,7 @@
 {% block title %}Delete {{ cfg.singular }}{% endblock %}
 {% block content %}
 <header class="top"><h1>Delete this {{ cfg.singular }}?</h1></header>
-<div class="card" style="max-width:560px">
+<div class="card confirm" style="max-width:560px">
  <p><strong>{{ obj }}</strong> will be removed from the website and cannot be brought back.</p>
  <form method="post" class="actions">
   {% csrf_token %}
