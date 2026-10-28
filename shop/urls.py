@@ -21,8 +21,11 @@ urlpatterns = [
     path("wishlist/", views.wishlist_view, name="wishlist"),
     path("wishlist/toggle/<int:pk>/", views.wishlist_toggle, name="wishlist_toggle"),
     # info pages
+    # info pages
     path("help/", views.faq, name="faq"),
     path("contact/", views.contact, name="contact"),
     path("about/", views.about, name="about"),
+    path("privacy-policy/", views.privacy_policy, name="privacy_policy"),
+    path("terms/", views.terms, name="terms"),
     path("robots.txt", views.robots_txt, name="robots"),
 ]

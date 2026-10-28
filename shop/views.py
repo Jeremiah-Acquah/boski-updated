@@ -380,6 +380,13 @@ def wishlist_toggle(request, pk):
 def about(request):
     return render(request, "shop/about.html")
 
+def privacy_policy(request):
+    return render(request, "shop/privacy_policy.html")
+
+
+def terms(request):
+    return render(request, "shop/terms.html")
+
 
 def faq(request):
     return render(request, "shop/faq.html", {"faqs": FAQ.objects.filter(is_active=True)})

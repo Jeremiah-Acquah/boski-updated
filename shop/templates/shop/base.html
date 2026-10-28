@@ -34,7 +34,6 @@
         <a href="{% url 'shop:faq' %}">Help</a>
         <a href="{% url 'shop:contact' %}">Contact</a>
         <a href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp {{ store.phone_display }}</a>
-        {% if user.is_staff %}<a class="admin-link" href="{% url 'dashboard:home' %}">Dashboard</a>{% else %}<a class="admin-link" href="{% url 'dashboard:login' %}">Admin login</a>{% endif %}
       </div>
     </div>
   </div>
@@ -150,6 +149,8 @@
           <li><a href="{% url 'shop:contact' %}#request">Request an item</a></li>
           <li><a href="{% url 'shop:cart' %}">Preorder list</a></li>
           <li><a href="{% url 'shop:about' %}">About {{ store.store_name }}</a></li>
+            <li><a href="{% url 'shop:privacy_policy' %}">Privacy Policy</a></li>
+            <li><a href="{% url 'shop:terms' %}">Terms of Service</a></li>
         </ul>
       </div>
       <div>
@@ -166,7 +167,6 @@
       <div class="wrap">
         <span>&copy; {% now "Y" %} {{ store.store_name }}. All products are imported on preorder.</span>
         <span class="footer-bottom-links">
-          {% if user.is_staff %}<a class="admin-link" href="{% url 'dashboard:home' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Go to dashboard</a>{% else %}<a class="admin-link" href="{% url 'dashboard:login' %}"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Admin login</a>{% endif %}
           <a class="to-top" href="#top" onclick="window.scrollTo({top:0});return false;"><svg class="ic" aria-hidden="true"><use href="#i-arrow-up"/></svg>Back to top</a>
         </span>
       </div>

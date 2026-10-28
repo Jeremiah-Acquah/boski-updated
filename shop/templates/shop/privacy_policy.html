@@ -1,0 +1,49 @@
+
+{% extends "shop/base.html" %}
+
+{% block title %}Privacy Policy | {{ store.store_name }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Privacy Policy</h1>
+  <p>How {{ store.store_name }} handles your personal information.</p>
+</div>
+
+<section class="block" style="margin-top:0">
+  <div class="about">
+    <p><strong>Last updated:</strong> 27 October 2026</p>
+
+    <p>{{ store.store_name }} is a Ghana-focused sourcing and pre-order business that helps customers obtain products from China and other markets. We respect your privacy and aim to handle your personal information responsibly.</p>
+
+    <h2>1. Information we collect</h2>
+    <p>When you submit an item-sourcing request through our website, we may collect your name, WhatsApp phone number, description of the item you want, optional budget, and the date and time of your request.</p>
+    <p>If you contact us or place a pre-order through WhatsApp, we may also receive the information you choose to share in that conversation, including information needed to discuss your order.</p>
+
+    <h2>2. How we use your information</h2>
+    <p>We use information to respond to requests, communicate about products, confirm quotations and pre-orders, coordinate agreed sourcing and shipping arrangements, provide customer support, and maintain business records.</p>
+
+    <h2>3. How information is stored and shared</h2>
+    <p>Item-sourcing requests submitted through the website are stored in our website system and may be accessible to authorised personnel managing customer requests.</p>
+    <p>We do not intend to sell your personal information. Where necessary to fulfil a request or order, information may need to be shared with relevant suppliers, sourcing agents, shipping or delivery providers, or service providers. We will aim to limit information shared to what is reasonably necessary.</p>
+
+    <h2>4. International transfers</h2>
+    <p>Because our business may involve sourcing goods from China and coordinating international shipping, some order-related information may need to be shared across borders. We will handle such information in accordance with applicable data-protection requirements.</p>
+
+    <h2>5. Data security and retention</h2>
+    <p>We aim to restrict access to personal information and take reasonable steps to protect it. No online service can guarantee absolute security. We retain information for as long as reasonably necessary for customer requests, orders, legal obligations, and legitimate business records.</p>
+
+    <h2>6. Your privacy rights</h2>
+    <p>Subject to applicable law, you may request access to personal information we hold about you, ask for inaccurate information to be corrected, or raise concerns about how your information is used. Some information may need to be retained where the law requires it.</p>
+
+    <h2>7. Cookies and technical information</h2>
+    <p>Our website may process technical information needed to operate and secure the service. If additional analytics or advertising tools are used, this policy should be updated to explain them accurately.</p>
+
+    <h2>8. Ghanaian law</h2>
+    <p>We aim to handle personal information in accordance with applicable Ghanaian data-protection law, including the Data Protection Act, 2012 (Act 843), where applicable.</p>
+
+    <h2>9. Contact us</h2>
+    <p>For questions or requests relating to this policy, contact {{ store.store_name }} using the contact details shown on our website.</p>
+    <p><a class="btn btn-wa" href="{{ store.whatsapp_link }}" target="_blank" rel="noopener">Contact us on WhatsApp</a></p>
+  </div>
+</section>
+{% endblock %}
